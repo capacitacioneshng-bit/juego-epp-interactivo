@@ -4,7 +4,510 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Juego de EPP - SST Interactivo</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Start Screen */
+        #startScreen {
+            padding: 40px 20px;
+        }
+
+        .start-content {
+            text-align: center;
+        }
+
+        .start-content h1 {
+            font-size: 3em;
+            color: #667eea;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .start-content h2 {
+            font-size: 1.5em;
+            color: #764ba2;
+            margin-bottom: 30px;
+        }
+
+        .instructions {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 30px 0;
+            text-align: left;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .instructions h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .instructions ul {
+            list-style: none;
+        }
+
+        .instructions li {
+            padding: 8px 0;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .difficulty-select {
+            margin-top: 40px;
+        }
+
+        .difficulty-select h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .btn-difficulty {
+            display: inline-block;
+            width: 160px;
+            padding: 15px;
+            margin: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+        }
+
+        .btn-difficulty:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-difficulty .level-number {
+            display: block;
+            font-size: 1.3em;
+            margin-bottom: 5px;
+        }
+
+        .btn-difficulty .level-desc {
+            display: block;
+            font-size: 0.8em;
+            opacity: 0.9;
+        }
+
+        /* Game Screen */
+        #gameScreen {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            max-height: 100vh;
+            background: linear-gradient(180deg, #e8eaf6 0%, #f3e5f5 100%);
+        }
+
+        .game-header {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.2em;
+        }
+
+        .info-item .label {
+            font-weight: bold;
+        }
+
+        .info-item .value {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+
+        .scenario-info {
+            background: white;
+            padding: 15px 20px;
+            border-bottom: 2px solid #667eea;
+            text-align: center;
+        }
+
+        .scenario-info h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .required-epps {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .required-epps .label {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .epps-display {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .epp-badge {
+            background: #667eea;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 1.3em;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .game-area {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(180deg, #e3f2fd 0%, #f3e5f5 100%);
+        }
+
+        .game-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .worker {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 4em;
+            cursor: grab;
+            user-select: none;
+            z-index: 100;
+            transition: transform 0.1s ease;
+        }
+
+        .worker:active {
+            cursor: grabbing;
+        }
+
+        .falling-epp {
+            position: absolute;
+            font-size: 3em;
+            cursor: pointer;
+            user-select: none;
+            animation: fall linear forwards;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+        }
+
+        .falling-epp.correct {
+            animation: catchCorrect 0.5s ease-out forwards;
+        }
+
+        .falling-epp.incorrect {
+            animation: catchIncorrect 0.5s ease-out forwards;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(100vh); }
+        }
+
+        @keyframes catchCorrect {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(0) translateY(-100px); opacity: 0; }
+        }
+
+        @keyframes catchIncorrect {
+            0% { transform: scale(1) rotate(0deg); opacity: 1; }
+            50% { transform: scale(1.2) rotate(-10deg); }
+            100% { transform: scale(0) rotate(360deg) translateY(100px); opacity: 0; }
+        }
+
+        .game-footer {
+            background: white;
+            padding: 15px 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .btn-pause, .btn-quit {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            transition: transform 0.2s;
+        }
+
+        .btn-pause {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .btn-quit {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-pause:hover, .btn-quit:hover {
+            transform: scale(1.05);
+        }
+
+        /* Pause Screen */
+        .pause-content {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .pause-content h1 {
+            font-size: 2.5em;
+            color: #667eea;
+            margin-bottom: 40px;
+        }
+
+        .pause-stats {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+            font-size: 1.3em;
+        }
+
+        .pause-stats p {
+            margin: 15px 0;
+            color: #333;
+        }
+
+        .pause-stats strong {
+            color: #667eea;
+            font-size: 1.5em;
+        }
+
+        /* Game Over Screen */
+        .gameover-content {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .gameover-content h1 {
+            font-size: 2.5em;
+            color: #667eea;
+            margin-bottom: 40px;
+        }
+
+        .final-stats {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .stat-label {
+            display: block;
+            color: #666;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .performance-message {
+            font-size: 1.3em;
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .performance-message.excellent {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+
+        .performance-message.good {
+            background: #bbdefb;
+            color: #1565c0;
+        }
+
+        .performance-message.fair {
+            background: #ffe0b2;
+            color: #e65100;
+        }
+
+        .performance-message.poor {
+            background: #ffccbc;
+            color: #bf360c;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 15px 40px;
+            margin: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            animation: slideIn 0.3s ease-out, slideOut 0.3s ease-out 2.7s forwards;
+            z-index: 1000;
+        }
+
+        .notification.correct {
+            background: #4caf50;
+            color: white;
+        }
+
+        .notification.incorrect {
+            background: #f44336;
+            color: white;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .start-content h1 { font-size: 2em; }
+            .btn-difficulty { width: 140px; padding: 12px; margin: 8px; }
+            .game-info { flex-direction: column; gap: 10px; }
+            .falling-epp { font-size: 2.5em; }
+            .worker { font-size: 3em; }
+        }
+
+        @media (max-width: 480px) {
+            .start-content h1 { font-size: 1.5em; }
+            .btn-difficulty { width: 130px; padding: 10px; font-size: 0.8em; }
+            .instructions li { font-size: 0.9em; }
+            .falling-epp { font-size: 2em; }
+            .worker { font-size: 2.5em; }
+            .epp-badge { font-size: 1em; }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -77,9 +580,7 @@
             </div>
 
             <div class="game-area">
-                <div class="worker">
-                    👷
-                </div>
+                <div class="worker">👷</div>
                 <div id="gameContainer" class="game-container"></div>
             </div>
 
@@ -105,7 +606,7 @@
         <!-- Pantalla de Game Over -->
         <div id="gameOverScreen" class="screen">
             <div class="gameover-content">
-                <h1 id="gameOverTitle">¡JUEGO TERMINADO!</h1>
+                <h1>¡JUEGO TERMINADO!</h1>
                 <div class="final-stats">
                     <div class="stat">
                         <span class="stat-label">Nivel Alcanzado:</span>
@@ -131,6 +632,305 @@
         </div>
     </div>
 
-    <script src="game.js"></script>
+    <script>
+        const LEVELS = {
+            1: {
+                name: 'Construcción',
+                duration: 60,
+                requiredEPPs: ['🪖', '🥽', '🧤'],
+                allEPPs: ['🪖', '🥽', '🧤', '⛑️', '👢', '🦺', '😷', '🔊'],
+                spawnRate: 1000,
+                difficulty: 0.1
+            },
+            2: {
+                name: 'Laboratorio',
+                duration: 60,
+                requiredEPPs: ['😷', '🧤', '🥽'],
+                allEPPs: ['😷', '🧤', '🥽', '🪖', '⛑️', '👢', '🦺', '🔊'],
+                spawnRate: 800,
+                difficulty: 0.15
+            },
+            3: {
+                name: 'Industrial',
+                duration: 60,
+                requiredEPPs: ['🪖', '🦺', '👢'],
+                allEPPs: ['🪖', '🦺', '👢', '🥽', '🧤', '😷', '⛑️', '🔊'],
+                spawnRate: 600,
+                difficulty: 0.2
+            },
+            4: {
+                name: 'Almacén',
+                duration: 60,
+                requiredEPPs: ['🥽', '🧤', '🦺'],
+                allEPPs: ['🥽', '🧤', '🦺', '🪖', '👢', '😷', '⛑️', '🔊'],
+                spawnRate: 500,
+                difficulty: 0.25
+            },
+            5: {
+                name: 'Desafío Total',
+                duration: 60,
+                requiredEPPs: ['🪖', '🥽', '🧤', '🦺', '👢'],
+                allEPPs: ['🪖', '🥽', '🧤', '🦺', '👢', '😷', '⛑️', '🔊'],
+                spawnRate: 400,
+                difficulty: 0.3
+            }
+        };
+
+        const EPP_INFO = {
+            '🪖': { name: 'Casco de Seguridad', safety: 'head' },
+            '🥽': { name: 'Gafas de Seguridad', safety: 'eyes' },
+            '🧤': { name: 'Guantes de Seguridad', safety: 'hands' },
+            '⛑️': { name: 'Casco de Construcción', safety: 'head' },
+            '👢': { name: 'Botas de Seguridad', safety: 'feet' },
+            '🦺': { name: 'Chaleco Reflectivo', safety: 'torso' },
+            '😷': { name: 'Mascarilla/Respirador', safety: 'respiratory' },
+            '🔊': { name: 'Protectores Auditivos', safety: 'ears' }
+        };
+
+        let gameState = {
+            currentLevel: 1,
+            score: 0,
+            time: 0,
+            isRunning: false,
+            isPaused: false,
+            caught: 0,
+            missed: 0,
+            totalSpawned: 0,
+            spawnTimer: null,
+            countdownTimer: null
+        };
+
+        function startGame(level) {
+            gameState.currentLevel = level;
+            gameState.score = 0;
+            gameState.time = LEVELS[level].duration;
+            gameState.caught = 0;
+            gameState.missed = 0;
+            gameState.totalSpawned = 0;
+            gameState.isRunning = true;
+            gameState.isPaused = false;
+
+            showScreen('gameScreen');
+            updateGameDisplay();
+            startGameLoop();
+        }
+
+        function startGameLoop() {
+            const level = LEVELS[gameState.currentLevel];
+
+            gameState.spawnTimer = setInterval(() => {
+                if (!gameState.isPaused && gameState.isRunning) {
+                    spawnEPP();
+                }
+            }, level.spawnRate);
+
+            gameState.countdownTimer = setInterval(() => {
+                if (!gameState.isPaused && gameState.isRunning) {
+                    gameState.time--;
+                    updateGameDisplay();
+
+                    if (gameState.time <= 0) {
+                        endGame();
+                    }
+                }
+            }, 1000);
+        }
+
+        function spawnEPP() {
+            const level = LEVELS[gameState.currentLevel];
+            const container = document.getElementById('gameContainer');
+
+            const allEPPs = level.allEPPs;
+            const randomEPP = allEPPs[Math.floor(Math.random() * allEPPs.length)];
+
+            const eppElement = document.createElement('div');
+            eppElement.className = 'falling-epp';
+            eppElement.textContent = randomEPP;
+            eppElement.dataset.epp = randomEPP;
+
+            const maxX = container.clientWidth - 60;
+            const randomX = Math.random() * maxX;
+            eppElement.style.left = randomX + 'px';
+            eppElement.style.top = '-50px';
+
+            const duration = 4 + Math.random() * 2;
+            eppElement.style.animationDuration = duration + 's';
+
+            eppElement.addEventListener('click', (e) => {
+                e.stopPropagation();
+                catchEPP(eppElement, randomEPP);
+            });
+
+            container.appendChild(eppElement);
+            gameState.totalSpawned++;
+
+            setTimeout(() => {
+                if (eppElement.parentNode) {
+                    missEPP(eppElement);
+                }
+            }, (duration + 0.5) * 1000);
+        }
+
+        function catchEPP(element, epp) {
+            const level = LEVELS[gameState.currentLevel];
+            const isCorrect = level.requiredEPPs.includes(epp);
+
+            element.classList.add(isCorrect ? 'correct' : 'incorrect');
+
+            if (isCorrect) {
+                gameState.score += 10;
+                gameState.caught++;
+                showNotification('+10 puntos ✓', 'correct');
+            } else {
+                gameState.score = Math.max(0, gameState.score - 5);
+                showNotification('-5 puntos ✗', 'incorrect');
+            }
+
+            updateGameDisplay();
+
+            setTimeout(() => {
+                element.remove();
+            }, 500);
+        }
+
+        function missEPP(element) {
+            gameState.missed++;
+            element.remove();
+        }
+
+        function updateGameDisplay() {
+            document.getElementById('levelDisplay').textContent = gameState.currentLevel;
+            document.getElementById('scoreDisplay').textContent = gameState.score;
+
+            const minutes = Math.floor(gameState.time / 60);
+            const seconds = gameState.time % 60;
+            document.getElementById('timerDisplay').textContent = 
+                (minutes > 0 ? minutes + 'm ' : '') + seconds + 's';
+
+            document.getElementById('scenarioName').textContent = LEVELS[gameState.currentLevel].name;
+
+            const requiredDisplay = document.getElementById('requiredEPPsDisplay');
+            requiredDisplay.innerHTML = '';
+            LEVELS[gameState.currentLevel].requiredEPPs.forEach(epp => {
+                const badge = document.createElement('div');
+                badge.className = 'epp-badge';
+                badge.innerHTML = `${epp} ${EPP_INFO[epp].name}`;
+                requiredDisplay.appendChild(badge);
+            });
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = 'notification ' + type;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        function pauseGame() {
+            gameState.isPaused = true;
+            document.getElementById('pauseScore').textContent = gameState.score;
+            document.getElementById('pauseLevel').textContent = gameState.currentLevel;
+            showScreen('pauseScreen');
+        }
+
+        function resumeGame() {
+            gameState.isPaused = false;
+            showScreen('gameScreen');
+        }
+
+        function endGame() {
+            gameState.isRunning = false;
+            clearInterval(gameState.spawnTimer);
+            clearInterval(gameState.countdownTimer);
+
+            document.querySelectorAll('.falling-epp').forEach(el => el.remove());
+
+            const accuracy = gameState.totalSpawned > 0 ? 
+                Math.round((gameState.caught / gameState.totalSpawned) * 100) : 0;
+
+            let message = '';
+            let messageClass = '';
+
+            if (accuracy >= 80) {
+                message = '🏆 ¡Excelente trabajo! Eres un experto en seguridad.';
+                messageClass = 'excellent';
+            } else if (accuracy >= 60) {
+                message = '👍 ¡Buen trabajo! Necesitas practicar más.';
+                messageClass = 'good';
+            } else if (accuracy >= 40) {
+                message = '⚠️ Desempeño regular. Revisa los EPPs requeridos.';
+                messageClass = 'fair';
+            } else {
+                message = '📚 Necesitas estudiar más sobre los EPPs. Intenta de nuevo.';
+                messageClass = 'poor';
+            }
+
+            document.getElementById('finalLevel').textContent = gameState.currentLevel;
+            document.getElementById('finalScore').textContent = gameState.score;
+            document.getElementById('finalCaught').textContent = gameState.caught;
+            document.getElementById('finalMissed').textContent = gameState.missed;
+            document.getElementById('performanceMessage').textContent = message;
+            document.getElementById('performanceMessage').className = 
+                'performance-message ' + messageClass;
+
+            showScreen('gameOverScreen');
+        }
+
+        function quitGame() {
+            gameState.isRunning = false;
+            clearInterval(gameState.spawnTimer);
+            clearInterval(gameState.countdownTimer);
+
+            document.querySelectorAll('.falling-epp').forEach(el => el.remove());
+
+            showStartScreen();
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function showStartScreen() {
+            showScreen('startScreen');
+            gameState.isRunning = false;
+            clearInterval(gameState.spawnTimer);
+            clearInterval(gameState.countdownTimer);
+        }
+
+        document.addEventListener('mousemove', (e) => {
+            const worker = document.querySelector('.worker');
+            if (worker && gameState.isRunning && !gameState.isPaused) {
+                const containerRect = document.getElementById('gameContainer')?.getBoundingClientRect();
+                if (containerRect) {
+                    const x = e.clientX - containerRect.left;
+                    const maxX = containerRect.width - 60;
+                    worker.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
+                }
+            }
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            const worker = document.querySelector('.worker');
+            if (worker && gameState.isRunning && !gameState.isPaused) {
+                const containerRect = document.getElementById('gameContainer')?.getBoundingClientRect();
+                if (containerRect) {
+                    const x = e.touches[0].clientX - containerRect.left;
+                    const maxX = containerRect.width - 60;
+                    worker.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
+                }
+            }
+        }, { passive: true });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            showScreen('startScreen');
+        });
+    </script>
 </body>
 </html>
