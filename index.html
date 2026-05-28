@@ -23,12 +23,11 @@
 
         .container {
             width: 100%;
-            max-width: 1000px;
+            max-width: 1200px;
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             overflow: hidden;
-            position: relative;
         }
 
         .screen {
@@ -48,9 +47,6 @@
         /* Start Screen */
         #startScreen {
             padding: 40px 20px;
-        }
-
-        .start-content {
             text-align: center;
         }
 
@@ -58,7 +54,6 @@
             font-size: 3em;
             color: #667eea;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .start-content h2 {
@@ -71,17 +66,14 @@
             background: #f8f9fa;
             padding: 20px;
             border-radius: 10px;
-            margin: 30px 0;
+            margin: 30px auto;
             text-align: left;
             max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
         }
 
         .instructions h3 {
             color: #667eea;
             margin-bottom: 15px;
-            font-size: 1.2em;
         }
 
         .instructions ul {
@@ -90,51 +82,25 @@
 
         .instructions li {
             padding: 8px 0;
-            font-size: 1.1em;
+            font-size: 1em;
             color: #333;
         }
 
-        .difficulty-select {
-            margin-top: 40px;
-        }
-
-        .difficulty-select h3 {
-            color: #667eea;
-            margin-bottom: 20px;
-            font-size: 1.3em;
-        }
-
-        .btn-difficulty {
-            display: inline-block;
-            width: 160px;
-            padding: 15px;
-            margin: 10px;
+        .btn-start {
+            padding: 15px 40px;
+            margin: 20px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 0.9em;
+            border-radius: 8px;
+            font-size: 1.1em;
             font-weight: bold;
-            transition: transform 0.3s, box-shadow 0.3s;
-            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
         }
 
-        .btn-difficulty:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-difficulty .level-number {
-            display: block;
-            font-size: 1.3em;
-            margin-bottom: 5px;
-        }
-
-        .btn-difficulty .level-desc {
-            display: block;
-            font-size: 0.8em;
-            opacity: 0.9;
+        .btn-start:hover {
+            transform: translateY(-2px);
         }
 
         /* Game Screen */
@@ -150,7 +116,6 @@
             background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 20px;
-            text-align: center;
         }
 
         .game-info {
@@ -167,16 +132,18 @@
             font-size: 1.2em;
         }
 
-        .info-item .label {
-            font-weight: bold;
-        }
-
         .info-item .value {
             background: rgba(255, 255, 255, 0.3);
             padding: 5px 15px;
             border-radius: 5px;
             font-weight: bold;
-            font-size: 1.3em;
+            font-size: 1.2em;
+        }
+
+        .lives {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #ff6b6b;
         }
 
         .scenario-info {
@@ -189,37 +156,24 @@
         .scenario-info h3 {
             color: #333;
             margin-bottom: 10px;
-        }
-
-        .required-epps {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .required-epps .label {
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        .epps-display {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .epp-badge {
-            background: #667eea;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 20px;
             font-size: 1.3em;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
+        }
+
+        .required-epp {
+            font-size: 4em;
+            margin: 10px 0;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .epp-name {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.1em;
         }
 
         .game-area {
@@ -240,21 +194,15 @@
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 4em;
-            cursor: grab;
+            font-size: 5em;
             user-select: none;
             z-index: 100;
-            transition: transform 0.1s ease;
-        }
-
-        .worker:active {
-            cursor: grabbing;
+            transition: left 0.05s ease;
         }
 
         .falling-epp {
             position: absolute;
-            font-size: 3em;
-            cursor: pointer;
+            font-size: 4em;
             user-select: none;
             animation: fall linear forwards;
             filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
@@ -290,16 +238,16 @@
             gap: 10px;
             justify-content: center;
             border-top: 2px solid #e0e0e0;
+            flex-wrap: wrap;
         }
 
-        .btn-pause, .btn-quit {
+        .btn-footer {
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
             font-size: 1em;
-            transition: transform 0.2s;
         }
 
         .btn-pause {
@@ -312,8 +260,31 @@
             color: white;
         }
 
-        .btn-pause:hover, .btn-quit:hover {
-            transform: scale(1.05);
+        .btn-move {
+            background: #2196F3;
+            color: white;
+            padding: 10px 15px;
+            margin: 5px;
+            font-size: 1.5em;
+            width: 50px;
+        }
+
+        .btn-move:active {
+            background: #0d47a1;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .controls-info {
+            font-size: 0.9em;
+            color: #666;
+            margin-right: 10px;
         }
 
         /* Pause Screen */
@@ -333,7 +304,7 @@
             padding: 30px;
             border-radius: 10px;
             margin-bottom: 40px;
-            font-size: 1.3em;
+            font-size: 1.2em;
         }
 
         .pause-stats p {
@@ -343,7 +314,7 @@
 
         .pause-stats strong {
             color: #667eea;
-            font-size: 1.5em;
+            font-size: 1.3em;
         }
 
         /* Game Over Screen */
@@ -355,7 +326,14 @@
         .gameover-content h1 {
             font-size: 2.5em;
             color: #667eea;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
+        }
+
+        .level-complete {
+            font-size: 2em;
+            color: #4caf50;
+            margin-bottom: 30px;
+            font-weight: bold;
         }
 
         .final-stats {
@@ -389,34 +367,6 @@
             color: #667eea;
         }
 
-        .performance-message {
-            font-size: 1.3em;
-            margin-bottom: 30px;
-            padding: 20px;
-            border-radius: 10px;
-            font-weight: bold;
-        }
-
-        .performance-message.excellent {
-            background: #c8e6c9;
-            color: #2e7d32;
-        }
-
-        .performance-message.good {
-            background: #bbdefb;
-            color: #1565c0;
-        }
-
-        .performance-message.fair {
-            background: #ffe0b2;
-            color: #e65100;
-        }
-
-        .performance-message.poor {
-            background: #ffccbc;
-            color: #bf360c;
-        }
-
         .btn-primary, .btn-secondary {
             padding: 15px 40px;
             margin: 10px;
@@ -425,7 +375,7 @@
             font-size: 1.1em;
             font-weight: bold;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s;
         }
 
         .btn-primary {
@@ -438,14 +388,8 @@
             color: #333;
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover, .btn-secondary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-secondary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
 
         .notification {
@@ -457,6 +401,7 @@
             font-weight: bold;
             animation: slideIn 0.3s ease-out, slideOut 0.3s ease-out 2.7s forwards;
             z-index: 1000;
+            font-size: 1.1em;
         }
 
         .notification.correct {
@@ -470,42 +415,20 @@
         }
 
         @keyframes slideIn {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
         @keyframes slideOut {
-            from {
-                transform: translateX(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateX(400px);
-                opacity: 0;
-            }
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(400px); opacity: 0; }
         }
 
         @media (max-width: 768px) {
-            .start-content h1 { font-size: 2em; }
-            .btn-difficulty { width: 140px; padding: 12px; margin: 8px; }
-            .game-info { flex-direction: column; gap: 10px; }
-            .falling-epp { font-size: 2.5em; }
-            .worker { font-size: 3em; }
-        }
-
-        @media (max-width: 480px) {
-            .start-content h1 { font-size: 1.5em; }
-            .btn-difficulty { width: 130px; padding: 10px; font-size: 0.8em; }
-            .instructions li { font-size: 0.9em; }
-            .falling-epp { font-size: 2em; }
-            .worker { font-size: 2.5em; }
-            .epp-badge { font-size: 1em; }
+            .falling-epp { font-size: 3em; }
+            .worker { font-size: 4em; }
+            .required-epp { font-size: 3em; }
+            .game-info { flex-direction: column; }
         }
     </style>
 </head>
@@ -519,36 +442,15 @@
                 <div class="instructions">
                     <h3>¿Cómo jugar?</h3>
                     <ul>
-                        <li>🎯 Los EPPs caerán del cielo</li>
-                        <li>👷 Atrapa los EPPs correctos para cada escenario</li>
-                        <li>⏱️ Tienes tiempo limitado en cada nivel</li>
-                        <li>⭐ Gana puntos por cada EPP correcto</li>
-                        <li>❌ No atrapes EPPs incorrectos (pierdes puntos)</li>
+                        <li>🎯 Un EPP caerá cada vez</li>
+                        <li>👷 Atrapa el EPP correcto con el trabajador</li>
+                        <li>⏱️ Tienes 60 segundos por nivel</li>
+                        <li>❤️ Tienes 3 vidas - pierdes una si atrapas el EPP incorrecto</li>
+                        <li>🎮 Usa el mouse o botones para moverte</li>
+                        <li>📈 Completa todos los 5 niveles</li>
                     </ul>
                 </div>
-                <div class="difficulty-select">
-                    <h3>Selecciona tu nivel:</h3>
-                    <button class="btn-difficulty" onclick="startGame(1)">
-                        <span class="level-number">Nivel 1</span>
-                        <span class="level-desc">Construcción</span>
-                    </button>
-                    <button class="btn-difficulty" onclick="startGame(2)">
-                        <span class="level-number">Nivel 2</span>
-                        <span class="level-desc">Laboratorio</span>
-                    </button>
-                    <button class="btn-difficulty" onclick="startGame(3)">
-                        <span class="level-number">Nivel 3</span>
-                        <span class="level-desc">Industrial</span>
-                    </button>
-                    <button class="btn-difficulty" onclick="startGame(4)">
-                        <span class="level-number">Nivel 4</span>
-                        <span class="level-desc">Almacén</span>
-                    </button>
-                    <button class="btn-difficulty" onclick="startGame(5)">
-                        <span class="level-number">Nivel 5</span>
-                        <span class="level-desc">Desafío Total</span>
-                    </button>
-                </div>
+                <button class="btn-start" onclick="startGame()">Comenzar Juego</button>
             </div>
         </div>
 
@@ -557,26 +459,27 @@
             <div class="game-header">
                 <div class="game-info">
                     <div class="info-item">
-                        <span class="label">Nivel:</span>
-                        <span id="levelDisplay" class="value">1</span>
+                        <span>Nivel:</span>
+                        <span id="levelDisplay" class="value">1/5</span>
                     </div>
                     <div class="info-item">
-                        <span class="label">Puntos:</span>
+                        <span>Puntos:</span>
                         <span id="scoreDisplay" class="value">0</span>
                     </div>
                     <div class="info-item">
-                        <span class="label">Tiempo:</span>
+                        <span>Tiempo:</span>
                         <span id="timerDisplay" class="value">60s</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="lives" id="livesDisplay">❤️ ❤️ ❤️</span>
                     </div>
                 </div>
             </div>
 
             <div class="scenario-info">
-                <h3>Escenario: <span id="scenarioName">Construcción</span></h3>
-                <div class="required-epps">
-                    <span class="label">EPPs requeridos:</span>
-                    <div id="requiredEPPsDisplay" class="epps-display"></div>
-                </div>
+                <h3>Atrapa el EPP correcto:</h3>
+                <div class="required-epp" id="requiredEPP">🪖</div>
+                <div class="epp-name" id="eppName">Casco de Seguridad</div>
             </div>
 
             <div class="game-area">
@@ -585,8 +488,13 @@
             </div>
 
             <div class="game-footer">
-                <button class="btn-pause" onclick="pauseGame()">⏸️ Pausa</button>
-                <button class="btn-quit" onclick="quitGame()">✕ Salir</button>
+                <div class="controls-info">Usa mouse o botones para moverte →</div>
+                <div class="controls">
+                    <button class="btn-move" onmousedown="moveWorker(-30)" onmouseup="stopWorker()" ontouchstart="moveWorker(-30)" ontouchend="stopWorker()">◀</button>
+                    <button class="btn-move" onmousedown="moveWorker(30)" onmouseup="stopWorker()" ontouchstart="moveWorker(30)" ontouchend="stopWorker()">▶</button>
+                </div>
+                <button class="btn-footer btn-pause" onclick="pauseGame()">⏸️ Pausa</button>
+                <button class="btn-footer btn-quit" onclick="quitGame()">✕ Salir</button>
             </div>
         </div>
 
@@ -595,120 +503,111 @@
             <div class="pause-content">
                 <h1>⏸️ JUEGO EN PAUSA</h1>
                 <div class="pause-stats">
-                    <p>Puntos actuales: <strong id="pauseScore">0</strong></p>
                     <p>Nivel: <strong id="pauseLevel">1</strong></p>
+                    <p>Puntos: <strong id="pauseScore">0</strong></p>
                 </div>
-                <button class="btn-primary" onclick="resumeGame()">Continuar Juego</button>
-                <button class="btn-secondary" onclick="quitGame()">Salir al Inicio</button>
+                <button class="btn-primary" onclick="resumeGame()">Continuar</button>
+                <button class="btn-secondary" onclick="quitGame()">Salir</button>
             </div>
         </div>
 
-        <!-- Pantalla de Game Over -->
+        <!-- Pantalla de Game Over / Nivel Completo -->
         <div id="gameOverScreen" class="screen">
             <div class="gameover-content">
-                <h1>¡JUEGO TERMINADO!</h1>
+                <h1 id="gameOverTitle">¡NIVEL COMPLETADO!</h1>
+                <div id="levelComplete" class="level-complete"></div>
                 <div class="final-stats">
                     <div class="stat">
-                        <span class="stat-label">Nivel Alcanzado:</span>
+                        <span class="stat-label">Nivel:</span>
                         <span class="stat-value" id="finalLevel">1</span>
                     </div>
                     <div class="stat">
-                        <span class="stat-label">Puntos Totales:</span>
+                        <span class="stat-label">Puntos:</span>
                         <span class="stat-value" id="finalScore">0</span>
                     </div>
                     <div class="stat">
                         <span class="stat-label">EPPs Atrapados:</span>
                         <span class="stat-value" id="finalCaught">0</span>
                     </div>
-                    <div class="stat">
-                        <span class="stat-label">EPPs Perdidos:</span>
-                        <span class="stat-value" id="finalMissed">0</span>
-                    </div>
                 </div>
-                <div id="performanceMessage" class="performance-message"></div>
-                <button class="btn-primary" onclick="showStartScreen()">Jugar de Nuevo</button>
-                <button class="btn-secondary" onclick="showStartScreen()">Volver al Inicio</button>
+                <div id="nextAction"></div>
             </div>
         </div>
     </div>
 
     <script>
-        const LEVELS = {
-            1: {
+        const LEVELS = [
+            {
                 name: 'Construcción',
                 duration: 60,
-                requiredEPPs: ['🪖', '🥽', '🧤'],
+                requiredEPP: '🪖',
+                eppName: 'Casco de Seguridad',
                 allEPPs: ['🪖', '🥽', '🧤', '⛑️', '👢', '🦺', '😷', '🔊'],
-                spawnRate: 1000,
-                difficulty: 0.1
+                spawnRate: 1000
             },
-            2: {
+            {
                 name: 'Laboratorio',
                 duration: 60,
-                requiredEPPs: ['😷', '🧤', '🥽'],
+                requiredEPP: '😷',
+                eppName: 'Mascarilla/Respirador',
                 allEPPs: ['😷', '🧤', '🥽', '🪖', '⛑️', '👢', '🦺', '🔊'],
-                spawnRate: 800,
-                difficulty: 0.15
+                spawnRate: 800
             },
-            3: {
+            {
                 name: 'Industrial',
                 duration: 60,
-                requiredEPPs: ['🪖', '🦺', '👢'],
-                allEPPs: ['🪖', '🦺', '👢', '🥽', '🧤', '😷', '⛑️', '🔊'],
-                spawnRate: 600,
-                difficulty: 0.2
+                requiredEPP: '🦺',
+                eppName: 'Chaleco Reflectivo',
+                allEPPs: ['🦺', '👢', '🪖', '🥽', '🧤', '😷', '⛑️', '🔊'],
+                spawnRate: 700
             },
-            4: {
+            {
                 name: 'Almacén',
                 duration: 60,
-                requiredEPPs: ['🥽', '🧤', '🦺'],
-                allEPPs: ['🥽', '🧤', '🦺', '🪖', '👢', '😷', '⛑️', '🔊'],
-                spawnRate: 500,
-                difficulty: 0.25
+                requiredEPP: '👢',
+                eppName: 'Botas de Seguridad',
+                allEPPs: ['👢', '🥽', '🧤', '🦺', '🪖', '😷', '⛑️', '🔊'],
+                spawnRate: 600
             },
-            5: {
+            {
                 name: 'Desafío Total',
                 duration: 60,
-                requiredEPPs: ['🪖', '🥽', '🧤', '🦺', '👢'],
-                allEPPs: ['🪖', '🥽', '🧤', '🦺', '👢', '😷', '⛑️', '🔊'],
-                spawnRate: 400,
-                difficulty: 0.3
+                requiredEPP: '🥽',
+                eppName: 'Gafas de Seguridad',
+                allEPPs: ['🥽', '🪖', '🧤', '🦺', '👢', '😷', '⛑️', '🔊'],
+                spawnRate: 500
             }
-        };
-
-        const EPP_INFO = {
-            '🪖': { name: 'Casco de Seguridad', safety: 'head' },
-            '🥽': { name: 'Gafas de Seguridad', safety: 'eyes' },
-            '🧤': { name: 'Guantes de Seguridad', safety: 'hands' },
-            '⛑️': { name: 'Casco de Construcción', safety: 'head' },
-            '👢': { name: 'Botas de Seguridad', safety: 'feet' },
-            '🦺': { name: 'Chaleco Reflectivo', safety: 'torso' },
-            '😷': { name: 'Mascarilla/Respirador', safety: 'respiratory' },
-            '🔊': { name: 'Protectores Auditivos', safety: 'ears' }
-        };
+        ];
 
         let gameState = {
-            currentLevel: 1,
+            currentLevel: 0,
             score: 0,
             time: 0,
+            lives: 3,
             isRunning: false,
             isPaused: false,
             caught: 0,
-            missed: 0,
-            totalSpawned: 0,
             spawnTimer: null,
-            countdownTimer: null
+            countdownTimer: null,
+            moveInterval: null,
+            moveDirection: 0
         };
 
-        function startGame(level) {
-            gameState.currentLevel = level;
+        function startGame() {
+            gameState.currentLevel = 0;
             gameState.score = 0;
-            gameState.time = LEVELS[level].duration;
+            gameState.lives = 3;
             gameState.caught = 0;
-            gameState.missed = 0;
-            gameState.totalSpawned = 0;
+            playLevel(0);
+        }
+
+        function playLevel(levelIndex) {
+            gameState.currentLevel = levelIndex;
+            gameState.time = LEVELS[levelIndex].duration;
+            gameState.caught = 0;
             gameState.isRunning = true;
             gameState.isPaused = false;
+            gameState.moveDirection = 0;
 
             showScreen('gameScreen');
             updateGameDisplay();
@@ -730,7 +629,7 @@
                     updateGameDisplay();
 
                     if (gameState.time <= 0) {
-                        endGame();
+                        endLevel();
                     }
                 }
             }, 1000);
@@ -753,37 +652,62 @@
             eppElement.style.left = randomX + 'px';
             eppElement.style.top = '-50px';
 
-            const duration = 4 + Math.random() * 2;
+            const duration = 3.5 + Math.random() * 1.5;
             eppElement.style.animationDuration = duration + 's';
 
-            eppElement.addEventListener('click', (e) => {
-                e.stopPropagation();
-                catchEPP(eppElement, randomEPP);
-            });
-
             container.appendChild(eppElement);
-            gameState.totalSpawned++;
+
+            const worker = document.querySelector('.worker');
+            const workerRect = worker.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+
+            const checkCollision = setInterval(() => {
+                const eppRect = eppElement.getBoundingClientRect();
+
+                if (
+                    eppRect.bottom >= workerRect.top &&
+                    eppRect.left < workerRect.right &&
+                    eppRect.right > workerRect.left
+                ) {
+                    clearInterval(checkCollision);
+                    catchEPP(eppElement, randomEPP);
+                    return;
+                }
+
+                if (eppRect.top > containerRect.bottom) {
+                    clearInterval(checkCollision);
+                    if (eppElement.parentNode) {
+                        eppElement.remove();
+                    }
+                }
+            }, 50);
 
             setTimeout(() => {
+                clearInterval(checkCollision);
                 if (eppElement.parentNode) {
-                    missEPP(eppElement);
+                    eppElement.remove();
                 }
-            }, (duration + 0.5) * 1000);
+            }, (duration + 1) * 1000);
         }
 
         function catchEPP(element, epp) {
             const level = LEVELS[gameState.currentLevel];
-            const isCorrect = level.requiredEPPs.includes(epp);
+            const isCorrect = epp === level.requiredEPP;
 
             element.classList.add(isCorrect ? 'correct' : 'incorrect');
 
             if (isCorrect) {
                 gameState.score += 10;
                 gameState.caught++;
-                showNotification('+10 puntos ✓', 'correct');
+                showNotification('✓ ¡CORRECTO! +10 puntos', 'correct');
             } else {
-                gameState.score = Math.max(0, gameState.score - 5);
-                showNotification('-5 puntos ✗', 'incorrect');
+                gameState.lives--;
+                showNotification('✗ ¡Incorrecto! Pierdes una vida', 'incorrect');
+
+                if (gameState.lives <= 0) {
+                    endGame();
+                    return;
+                }
             }
 
             updateGameDisplay();
@@ -793,13 +717,9 @@
             }, 500);
         }
 
-        function missEPP(element) {
-            gameState.missed++;
-            element.remove();
-        }
-
         function updateGameDisplay() {
-            document.getElementById('levelDisplay').textContent = gameState.currentLevel;
+            const currentLevelData = LEVELS[gameState.currentLevel];
+            document.getElementById('levelDisplay').textContent = (gameState.currentLevel + 1) + '/5';
             document.getElementById('scoreDisplay').textContent = gameState.score;
 
             const minutes = Math.floor(gameState.time / 60);
@@ -807,16 +727,14 @@
             document.getElementById('timerDisplay').textContent = 
                 (minutes > 0 ? minutes + 'm ' : '') + seconds + 's';
 
-            document.getElementById('scenarioName').textContent = LEVELS[gameState.currentLevel].name;
+            document.getElementById('requiredEPP').textContent = currentLevelData.requiredEPP;
+            document.getElementById('eppName').textContent = currentLevelData.eppName;
 
-            const requiredDisplay = document.getElementById('requiredEPPsDisplay');
-            requiredDisplay.innerHTML = '';
-            LEVELS[gameState.currentLevel].requiredEPPs.forEach(epp => {
-                const badge = document.createElement('div');
-                badge.className = 'epp-badge';
-                badge.innerHTML = `${epp} ${EPP_INFO[epp].name}`;
-                requiredDisplay.appendChild(badge);
-            });
+            let livesDisplay = '';
+            for (let i = 0; i < gameState.lives; i++) {
+                livesDisplay += '❤️ ';
+            }
+            document.getElementById('livesDisplay').textContent = livesDisplay || 'Sin vidas';
         }
 
         function showNotification(message, type) {
@@ -830,10 +748,40 @@
             }, 3000);
         }
 
+        function moveWorker(distance) {
+            gameState.moveDirection = distance;
+
+            gameState.moveInterval = setInterval(() => {
+                const worker = document.querySelector('.worker');
+                const container = document.getElementById('gameContainer');
+                const currentLeft = parseFloat(worker.style.left) || container.clientWidth / 2 - 30;
+                const newLeft = Math.max(0, Math.min(currentLeft + gameState.moveDirection, container.clientWidth - 60));
+
+                worker.style.left = newLeft + 'px';
+            }, 30);
+        }
+
+        function stopWorker() {
+            clearInterval(gameState.moveInterval);
+            gameState.moveDirection = 0;
+        }
+
+        document.addEventListener('mousemove', (e) => {
+            if (gameState.isRunning && !gameState.isPaused) {
+                const worker = document.querySelector('.worker');
+                const container = document.getElementById('gameContainer');
+                const containerRect = container.getBoundingClientRect();
+
+                const x = e.clientX - containerRect.left;
+                const maxX = containerRect.width - 60;
+                worker.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
+            }
+        });
+
         function pauseGame() {
             gameState.isPaused = true;
             document.getElementById('pauseScore').textContent = gameState.score;
-            document.getElementById('pauseLevel').textContent = gameState.currentLevel;
+            document.getElementById('pauseLevel').textContent = gameState.currentLevel + 1;
             showScreen('pauseScreen');
         }
 
@@ -842,40 +790,45 @@
             showScreen('gameScreen');
         }
 
+        function endLevel() {
+            gameState.isRunning = false;
+            clearInterval(gameState.spawnTimer);
+            clearInterval(gameState.countdownTimer);
+            clearInterval(gameState.moveInterval);
+
+            document.querySelectorAll('.falling-epp').forEach(el => el.remove());
+
+            document.getElementById('finalLevel').textContent = gameState.currentLevel + 1;
+            document.getElementById('finalScore').textContent = gameState.score;
+            document.getElementById('finalCaught').textContent = gameState.caught;
+
+            if (gameState.currentLevel < 4) {
+                document.getElementById('gameOverTitle').textContent = '¡NIVEL ' + (gameState.currentLevel + 1) + ' COMPLETADO!';
+                document.getElementById('levelComplete').textContent = '🎉 ¡Excelente! Pasaste al siguiente nivel';
+                document.getElementById('nextAction').innerHTML = '<button class="btn-primary" onclick="playLevel(' + (gameState.currentLevel + 1) + ')">Nivel ' + (gameState.currentLevel + 2) + '</button>';
+            } else {
+                document.getElementById('gameOverTitle').textContent = '¡JUEGO COMPLETADO!';
+                document.getElementById('levelComplete').textContent = '🏆 ¡GANASTE! Completaste todos los niveles';
+                document.getElementById('nextAction').innerHTML = '<button class="btn-primary" onclick="showStartScreen()">Volver al Inicio</button>';
+            }
+
+            showScreen('gameOverScreen');
+        }
+
         function endGame() {
             gameState.isRunning = false;
             clearInterval(gameState.spawnTimer);
             clearInterval(gameState.countdownTimer);
+            clearInterval(gameState.moveInterval);
 
             document.querySelectorAll('.falling-epp').forEach(el => el.remove());
 
-            const accuracy = gameState.totalSpawned > 0 ? 
-                Math.round((gameState.caught / gameState.totalSpawned) * 100) : 0;
-
-            let message = '';
-            let messageClass = '';
-
-            if (accuracy >= 80) {
-                message = '🏆 ¡Excelente trabajo! Eres un experto en seguridad.';
-                messageClass = 'excellent';
-            } else if (accuracy >= 60) {
-                message = '👍 ¡Buen trabajo! Necesitas practicar más.';
-                messageClass = 'good';
-            } else if (accuracy >= 40) {
-                message = '⚠️ Desempeño regular. Revisa los EPPs requeridos.';
-                messageClass = 'fair';
-            } else {
-                message = '📚 Necesitas estudiar más sobre los EPPs. Intenta de nuevo.';
-                messageClass = 'poor';
-            }
-
-            document.getElementById('finalLevel').textContent = gameState.currentLevel;
+            document.getElementById('gameOverTitle').textContent = '¡JUEGO TERMINADO!';
+            document.getElementById('levelComplete').textContent = '😞 Se acabaron las vidas';
+            document.getElementById('finalLevel').textContent = gameState.currentLevel + 1;
             document.getElementById('finalScore').textContent = gameState.score;
             document.getElementById('finalCaught').textContent = gameState.caught;
-            document.getElementById('finalMissed').textContent = gameState.missed;
-            document.getElementById('performanceMessage').textContent = message;
-            document.getElementById('performanceMessage').className = 
-                'performance-message ' + messageClass;
+            document.getElementById('nextAction').innerHTML = '<button class="btn-primary" onclick="startGame()">Reintentar desde Nivel 1</button>';
 
             showScreen('gameOverScreen');
         }
@@ -884,6 +837,7 @@
             gameState.isRunning = false;
             clearInterval(gameState.spawnTimer);
             clearInterval(gameState.countdownTimer);
+            clearInterval(gameState.moveInterval);
 
             document.querySelectorAll('.falling-epp').forEach(el => el.remove());
 
@@ -899,34 +853,7 @@
 
         function showStartScreen() {
             showScreen('startScreen');
-            gameState.isRunning = false;
-            clearInterval(gameState.spawnTimer);
-            clearInterval(gameState.countdownTimer);
         }
-
-        document.addEventListener('mousemove', (e) => {
-            const worker = document.querySelector('.worker');
-            if (worker && gameState.isRunning && !gameState.isPaused) {
-                const containerRect = document.getElementById('gameContainer')?.getBoundingClientRect();
-                if (containerRect) {
-                    const x = e.clientX - containerRect.left;
-                    const maxX = containerRect.width - 60;
-                    worker.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
-                }
-            }
-        });
-
-        document.addEventListener('touchmove', (e) => {
-            const worker = document.querySelector('.worker');
-            if (worker && gameState.isRunning && !gameState.isPaused) {
-                const containerRect = document.getElementById('gameContainer')?.getBoundingClientRect();
-                if (containerRect) {
-                    const x = e.touches[0].clientX - containerRect.left;
-                    const maxX = containerRect.width - 60;
-                    worker.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
-                }
-            }
-        }, { passive: true });
 
         document.addEventListener('DOMContentLoaded', () => {
             showScreen('startScreen');
