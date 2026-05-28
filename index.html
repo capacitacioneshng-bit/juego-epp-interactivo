@@ -148,7 +148,7 @@
 
         .scenario-info {
             background: white;
-            padding: 15px 20px;
+            padding: 20px;
             border-bottom: 2px solid #667eea;
             text-align: center;
         }
@@ -159,21 +159,52 @@
             font-size: 1.3em;
         }
 
-        .required-epp {
-            font-size: 4em;
-            margin: 10px 0;
-            animation: pulse 1.5s infinite;
+        .required-epps-display {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 15px;
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+        .epp-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .epp-image {
+            width: 70px;
+            height: 70px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
         }
 
         .epp-name {
             color: #667eea;
             font-weight: bold;
-            font-size: 1.1em;
+            font-size: 0.85em;
+            text-align: center;
+            max-width: 80px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
         }
 
         .game-area {
@@ -202,7 +233,11 @@
 
         .falling-epp {
             position: absolute;
-            font-size: 4em;
+            width: 80px;
+            height: 80px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
             user-select: none;
             animation: fall linear forwards;
             filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
@@ -273,7 +308,6 @@
             background: #0d47a1;
         }
 
-        /* Controls */
         .controls {
             display: flex;
             justify-content: center;
@@ -425,9 +459,9 @@
         }
 
         @media (max-width: 768px) {
-            .falling-epp { font-size: 3em; }
+            .epp-image { width: 60px; height: 60px; }
+            .falling-epp { width: 60px; height: 60px; }
             .worker { font-size: 4em; }
-            .required-epp { font-size: 3em; }
             .game-info { flex-direction: column; }
         }
     </style>
@@ -442,12 +476,12 @@
                 <div class="instructions">
                     <h3>¿Cómo jugar?</h3>
                     <ul>
-                        <li>🎯 Un EPP caerá cada vez</li>
-                        <li>👷 Atrapa el EPP correcto con el trabajador</li>
-                        <li>⏱️ Tienes 60 segundos por nivel</li>
+                        <li>🎯 Caerán varios EPPs (algunos correctos, otros no)</li>
+                        <li>👷 Atrapa la cantidad requerida de EPPs correctos</li>
+                        <li>⏱️ Tienes tiempo limitado en cada escenario</li>
                         <li>❤️ Tienes 3 vidas - pierdes una si atrapas el EPP incorrecto</li>
                         <li>🎮 Usa el mouse o botones para moverte</li>
-                        <li>📈 Completa todos los 5 niveles</li>
+                        <li>📈 Completa todos los 5 escenarios</li>
                     </ul>
                 </div>
                 <button class="btn-start" onclick="startGame()">Comenzar Juego</button>
@@ -468,7 +502,7 @@
                     </div>
                     <div class="info-item">
                         <span>Tiempo:</span>
-                        <span id="timerDisplay" class="value">60s</span>
+                        <span id="timerDisplay" class="value">90s</span>
                     </div>
                     <div class="info-item">
                         <span class="lives" id="livesDisplay">❤️ ❤️ ❤️</span>
@@ -477,9 +511,15 @@
             </div>
 
             <div class="scenario-info">
-                <h3>Atrapa el EPP correcto:</h3>
-                <div class="required-epp" id="requiredEPP">🪖</div>
-                <div class="epp-name" id="eppName">Casco de Seguridad</div>
+                <h3 id="scenarioName">Construcción</h3>
+                <p style="color: #666; margin: 10px 0;">Atrapa los EPPs correctos:</p>
+                <div class="required-epps-display" id="requiredEPPsDisplay"></div>
+                <p style="color: #667eea; font-weight: bold; margin-top: 10px;">
+                    Atrapados: <span id="caughtCount">0</span> / <span id="requiredCount">5</span>
+                </p>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
             </div>
 
             <div class="game-area">
@@ -518,7 +558,7 @@
                 <div id="levelComplete" class="level-complete"></div>
                 <div class="final-stats">
                     <div class="stat">
-                        <span class="stat-label">Nivel:</span>
+                        <span class="stat-label">Escenario:</span>
                         <span class="stat-value" id="finalLevel">1</span>
                     </div>
                     <div class="stat">
@@ -536,48 +576,69 @@
     </div>
 
     <script>
+        // URLs de imágenes para cada EPP
+        const EPP_IMAGES = {
+            'casco': 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=200&h=200&fit=crop',
+            'gafas': 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=200&h=200&fit=crop',
+            'guantes': 'https://images.unsplash.com/photo-1530124566582-a618bc2615dc?w=200&h=200&fit=crop',
+            'botas': 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200&h=200&fit=crop',
+            'chaleco': 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=200&h=200&fit=crop',
+            'mascarilla': 'https://images.unsplash.com/photo-1584308666744-24d5f400f6f7?w=200&h=200&fit=crop',
+            'protectores': 'https://images.unsplash.com/photo-1587280413474-ca4aafb2d9a0?w=200&h=200&fit=crop'
+        };
+
         const LEVELS = [
             {
                 name: 'Construcción',
-                duration: 60,
-                requiredEPP: '🪖',
-                eppName: 'Casco de Seguridad',
-                allEPPs: ['🪖', '🥽', '🧤', '⛑️', '👢', '🦺', '😷', '🔊'],
-                spawnRate: 1000
+                duration: 90,
+                requiredEPPs: ['casco', 'gafas', 'guantes'],
+                targetCount: 5,
+                allEPPs: ['casco', 'gafas', 'guantes', 'botas', 'chaleco', 'mascarilla', 'protectores'],
+                spawnRate: 1200
             },
             {
                 name: 'Laboratorio',
-                duration: 60,
-                requiredEPP: '😷',
-                eppName: 'Mascarilla/Respirador',
-                allEPPs: ['😷', '🧤', '🥽', '🪖', '⛑️', '👢', '🦺', '🔊'],
-                spawnRate: 800
+                duration: 75,
+                requiredEPPs: ['mascarilla', 'guantes', 'gafas'],
+                targetCount: 8,
+                allEPPs: ['mascarilla', 'guantes', 'gafas', 'casco', 'botas', 'chaleco', 'protectores'],
+                spawnRate: 1000
             },
             {
                 name: 'Industrial',
                 duration: 60,
-                requiredEPP: '🦺',
-                eppName: 'Chaleco Reflectivo',
-                allEPPs: ['🦺', '👢', '🪖', '🥽', '🧤', '😷', '⛑️', '🔊'],
-                spawnRate: 700
+                requiredEPPs: ['casco', 'chaleco', 'botas'],
+                targetCount: 10,
+                allEPPs: ['casco', 'chaleco', 'botas', 'gafas', 'guantes', 'mascarilla', 'protectores'],
+                spawnRate: 800
             },
             {
                 name: 'Almacén',
-                duration: 60,
-                requiredEPP: '👢',
-                eppName: 'Botas de Seguridad',
-                allEPPs: ['👢', '🥽', '🧤', '🦺', '🪖', '😷', '⛑️', '🔊'],
-                spawnRate: 600
+                duration: 50,
+                requiredEPPs: ['gafas', 'guantes', 'chaleco'],
+                targetCount: 12,
+                allEPPs: ['gafas', 'guantes', 'chaleco', 'casco', 'botas', 'mascarilla', 'protectores'],
+                spawnRate: 700
             },
             {
                 name: 'Desafío Total',
-                duration: 60,
-                requiredEPP: '🥽',
-                eppName: 'Gafas de Seguridad',
-                allEPPs: ['🥽', '🪖', '🧤', '🦺', '👢', '😷', '⛑️', '🔊'],
-                spawnRate: 500
+                duration: 40,
+                requiredEPPs: ['casco', 'gafas', 'guantes', 'chaleco', 'botas'],
+                targetCount: 15,
+                allEPPs: ['casco', 'gafas', 'guantes', 'chaleco', 'botas', 'mascarilla', 'protectores'],
+                spawnRate: 600
             }
         ];
+
+        const EPP_NAMES = {
+            'casco': 'Casco',
+            'gafas': 'Gafas',
+            'guantes': 'Guantes',
+            'botas': 'Botas',
+            'chaleco': 'Chaleco',
+            'mascarilla': 'Mascarilla',
+            'protectores': 'Protectores'
+        };
 
         let gameState = {
             currentLevel: 0,
@@ -587,6 +648,7 @@
             isRunning: false,
             isPaused: false,
             caught: 0,
+            required: 0,
             spawnTimer: null,
             countdownTimer: null,
             moveInterval: null,
@@ -603,15 +665,34 @@
 
         function playLevel(levelIndex) {
             gameState.currentLevel = levelIndex;
-            gameState.time = LEVELS[levelIndex].duration;
+            const level = LEVELS[levelIndex];
+            gameState.time = level.duration;
             gameState.caught = 0;
+            gameState.required = level.targetCount;
             gameState.isRunning = true;
             gameState.isPaused = false;
             gameState.moveDirection = 0;
 
             showScreen('gameScreen');
             updateGameDisplay();
+            displayRequiredEPPs();
             startGameLoop();
+        }
+
+        function displayRequiredEPPs() {
+            const level = LEVELS[gameState.currentLevel];
+            const display = document.getElementById('requiredEPPsDisplay');
+            display.innerHTML = '';
+
+            level.requiredEPPs.forEach(epp => {
+                const div = document.createElement('div');
+                div.className = 'epp-item';
+                div.innerHTML = `
+                    <div class="epp-image" style="background-image: url('${EPP_IMAGES[epp]}'); background-size: cover;"></div>
+                    <span class="epp-name">${EPP_NAMES[epp]}</span>
+                `;
+                display.appendChild(div);
+            });
         }
 
         function startGameLoop() {
@@ -644,13 +725,14 @@
 
             const eppElement = document.createElement('div');
             eppElement.className = 'falling-epp';
-            eppElement.textContent = randomEPP;
+            eppElement.style.backgroundImage = `url('${EPP_IMAGES[randomEPP]}')`;
+            eppElement.style.backgroundSize = 'cover';
             eppElement.dataset.epp = randomEPP;
 
-            const maxX = container.clientWidth - 60;
+            const maxX = container.clientWidth - 80;
             const randomX = Math.random() * maxX;
             eppElement.style.left = randomX + 'px';
-            eppElement.style.top = '-50px';
+            eppElement.style.top = '-80px';
 
             const duration = 3.5 + Math.random() * 1.5;
             eppElement.style.animationDuration = duration + 's';
@@ -692,7 +774,7 @@
 
         function catchEPP(element, epp) {
             const level = LEVELS[gameState.currentLevel];
-            const isCorrect = epp === level.requiredEPP;
+            const isCorrect = level.requiredEPPs.includes(epp);
 
             element.classList.add(isCorrect ? 'correct' : 'incorrect');
 
@@ -700,9 +782,14 @@
                 gameState.score += 10;
                 gameState.caught++;
                 showNotification('✓ ¡CORRECTO! +10 puntos', 'correct');
+
+                if (gameState.caught >= gameState.required) {
+                    endLevel();
+                    return;
+                }
             } else {
                 gameState.lives--;
-                showNotification('✗ ¡Incorrecto! Pierdes una vida', 'incorrect');
+                showNotification('✗ ¡Incorrecto! -1 vida', 'incorrect');
 
                 if (gameState.lives <= 0) {
                     endGame();
@@ -721,14 +808,18 @@
             const currentLevelData = LEVELS[gameState.currentLevel];
             document.getElementById('levelDisplay').textContent = (gameState.currentLevel + 1) + '/5';
             document.getElementById('scoreDisplay').textContent = gameState.score;
+            document.getElementById('scenarioName').textContent = currentLevelData.name;
 
             const minutes = Math.floor(gameState.time / 60);
             const seconds = gameState.time % 60;
             document.getElementById('timerDisplay').textContent = 
                 (minutes > 0 ? minutes + 'm ' : '') + seconds + 's';
 
-            document.getElementById('requiredEPP').textContent = currentLevelData.requiredEPP;
-            document.getElementById('eppName').textContent = currentLevelData.eppName;
+            document.getElementById('caughtCount').textContent = gameState.caught;
+            document.getElementById('requiredCount').textContent = gameState.required;
+
+            const progress = (gameState.caught / gameState.required) * 100;
+            document.getElementById('progressFill').style.width = Math.min(progress, 100) + '%';
 
             let livesDisplay = '';
             for (let i = 0; i < gameState.lives; i++) {
@@ -754,8 +845,8 @@
             gameState.moveInterval = setInterval(() => {
                 const worker = document.querySelector('.worker');
                 const container = document.getElementById('gameContainer');
-                const currentLeft = parseFloat(worker.style.left) || container.clientWidth / 2 - 30;
-                const newLeft = Math.max(0, Math.min(currentLeft + gameState.moveDirection, container.clientWidth - 60));
+                const currentLeft = parseFloat(worker.style.left) || container.clientWidth / 2 - 40;
+                const newLeft = Math.max(0, Math.min(currentLeft + gameState.moveDirection, container.clientWidth - 80));
 
                 worker.style.left = newLeft + 'px';
             }, 30);
@@ -773,7 +864,7 @@
                 const containerRect = container.getBoundingClientRect();
 
                 const x = e.clientX - containerRect.left;
-                const maxX = containerRect.width - 60;
+                const maxX = containerRect.width - 80;
                 worker.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
             }
         });
@@ -804,11 +895,11 @@
 
             if (gameState.currentLevel < 4) {
                 document.getElementById('gameOverTitle').textContent = '¡NIVEL ' + (gameState.currentLevel + 1) + ' COMPLETADO!';
-                document.getElementById('levelComplete').textContent = '🎉 ¡Excelente! Pasaste al siguiente nivel';
-                document.getElementById('nextAction').innerHTML = '<button class="btn-primary" onclick="playLevel(' + (gameState.currentLevel + 1) + ')">Nivel ' + (gameState.currentLevel + 2) + '</button>';
+                document.getElementById('levelComplete').textContent = '🎉 ¡Excelente! Avanzas al siguiente escenario';
+                document.getElementById('nextAction').innerHTML = '<button class="btn-primary" onclick="playLevel(' + (gameState.currentLevel + 1) + ')">Siguiente Escenario</button>';
             } else {
                 document.getElementById('gameOverTitle').textContent = '¡JUEGO COMPLETADO!';
-                document.getElementById('levelComplete').textContent = '🏆 ¡GANASTE! Completaste todos los niveles';
+                document.getElementById('levelComplete').textContent = '🏆 ¡GANASTE! Completaste todos los escenarios';
                 document.getElementById('nextAction').innerHTML = '<button class="btn-primary" onclick="showStartScreen()">Volver al Inicio</button>';
             }
 
